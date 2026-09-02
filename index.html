@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Book a demo — OhMD</title>
+<meta name="description" content="See how OhMD cuts front-desk call volume. Book a 20-minute demo." />
+<meta name="robots" content="noindex" />
+<link rel="icon" href="data:," />
+
+<meta property="og:title" content="Book a demo — OhMD" />
+<meta property="og:description" content="See how OhMD cuts front-desk call volume. Book a 20-minute demo." />
+<meta property="og:type" content="website" />
+
+<style>
+  :root {
+    --ink:      #0e1a23;
+    --ink-soft: #5a6b78;
+    --line:     #dfe5ea;
+    --bg:       #f6f8f9;
+    --card:     #ffffff;
+    --accent:   #0f8b8d;
+    --accent-d: #0b6f71;
+    --err:      #b42318;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
+          Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 48px 20px 64px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .brand .mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: -0.02em;
+  }
+
+  .brand .name {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  h1 {
+    font-size: 30px;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    margin: 0 0 10px;
+    font-weight: 640;
+  }
+
+  .sub {
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+    font-size: 16px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 1px 2px rgba(14, 26, 35, 0.04),
+                0 8px 24px -12px rgba(14, 26, 35, 0.10);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .field { margin-bottom: 16px; }
+
+  label {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 550;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+
+  input, select {
+    width: 100%;
+    padding: 11px 12px;
+    font: inherit;
+    font-size: 15px;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    outline: none;
+    transition: border-color .12s, box-shadow .12s;
+    appearance: none;
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235a6b78' d='M1.4 1.4 6 6l4.6-4.6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 34px;
+  }
+
+  input:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(15, 139, 141, 0.14);
+  }
+
+  input:user-invalid {
+    border-color: var(--err);
+  }
+
+  button[type="submit"] {
+    width: 100%;
+    margin-top: 8px;
+    padding: 13px 16px;
+    font: inherit;
+    font-size: 15.5px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--accent);
+    border: 0;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background .12s, opacity .12s;
+  }
+
+  button[type="submit"]:hover:not(:disabled) { background: var(--accent-d); }
+  button[type="submit"]:disabled { opacity: .6; cursor: default; }
+
+  .note {
+    margin: 14px 0 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+
+  .error {
+    display: none;
+    margin: 16px 0 0;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--err);
+    background: #fef3f2;
+    border: 1px solid #fecdc9;
+    border-radius: 8px;
+  }
+
+  .error.show { display: block; }
+
+  /* Where Default mounts the scheduler after a successful submit */
+  #scheduler:not(:empty) {
+    margin-top: 24px;
+    min-height: 620px;
+  }
+
+  .done {
+    display: none;
+    text-align: center;
+    padding: 8px 0 4px;
+  }
+
+  .done.show { display: block; }
+
+  .done .tick {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: rgba(15, 139, 141, 0.10);
+    color: var(--accent);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+  }
+
+  .done h2 {
+    font-size: 19px;
+    margin: 0 0 6px;
+    letter-spacing: -0.015em;
+  }
+
+  .done p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+
+  .hidden { display: none !important; }
+
+  footer {
+    text-align: center;
+    padding: 0 20px 32px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+
+  footer a { color: var(--ink-soft); }
+
+  @media (max-width: 480px) {
+    main { padding: 32px 16px 48px; }
+    h1 { font-size: 25px; }
+    .card { padding: 20px; border-radius: 12px; }
+    .row { grid-template-columns: 1fr; gap: 0; }
+  }
+</style>
+</head>
+<body>
+
+<main>
+  <div class="brand">
+    <div class="mark">Oh</div>
+    <div class="name">OhMD</div>
+  </div>
+
+  <h1>Book a 20-minute demo</h1>
+  <p class="sub">
+    See how practices cut staff-answered calls without adding headcount.
+    Tell us a bit about your practice and pick a time that works.
+  </p>
+
+  <div class="card">
+    <!-- Default's pre-built form. IDs must stay exactly as Default generated them. -->
+    <form id="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13" novalidate>
+      <div class="row">
+        <div class="field">
+          <label for="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-first_name">First name</label>
+          <input type="text" id="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-first_name"
+                 name="first_name" autocomplete="given-name" required>
+        </div>
+        <div class="field">
+          <label for="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-last_name">Last name</label>
+          <input type="text" id="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-last_name"
+                 name="last_name" autocomplete="family-name" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-email">Work email</label>
+        <input type="email" id="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-email"
+               name="email" autocomplete="email" inputmode="email" required>
+      </div>
+
+      <div class="field">
+        <label for="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-company_name">Practice / organization</label>
+        <input type="text" id="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-company_name"
+               name="company_name" autocomplete="organization" required>
+      </div>
+
+      <div class="field">
+        <label for="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-job_title">Job title</label>
+        <input type="text" id="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-job_title"
+               name="job_title" autocomplete="organization-title" required>
+      </div>
+
+      <div class="field">
+        <label for="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-provider_count">How many providers are in your practice?</label>
+        <select id="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-provider_count"
+                name="provider_count" required>
+          <option value="" disabled selected>Select one</option>
+          <option value="1-30">1–30 providers</option>
+          <option value="31+">31+ providers</option>
+        </select>
+      </div>
+
+      <button type="submit" id="submit-btn">Find a time</button>
+      <p class="note">No pitch decks. A working demo on your own workflows.</p>
+      <p class="error" id="form-error" role="alert"></p>
+    </form>
+
+    <div class="done" id="done">
+      <div class="tick">✓</div>
+      <h2>You're all set</h2>
+      <p>Check your inbox — we've sent the meeting details and a calendar invite.</p>
+    </div>
+  </div>
+
+  <!-- Default renders the scheduler here once the form is submitted -->
+  <div id="scheduler"></div>
+</main>
+
+<footer>
+  HIPAA-compliant patient communication · <a href="https://www.ohmd.com">ohmd.com</a>
+</footer>
+
+<!-- Default Pixel SDK -->
+<script src="https://handshake.default.com/sdk.js"></script>
+<script>
+  DefaultPixelSDK.init({
+    publicKey: "721fb4d5-d65f-4c0c-aaf5-fa202417f077",
+    endpoint: "https://api.default.com",
+    schedulerOrigins: [
+      "https://book.default.com",
+      "https://handshake.default.com",
+      window.location.origin
+    ],
+  });
+</script>
+
+<script>
+  const FORM_ID  = "manual-5d8fac5d-c043-4c9f-845e-c491cd500c13";
+  const PIXEL_ID = "6c1e28ba-8a52-468b-af42-4beb4022cffb";
+
+  const form   = document.getElementById(FORM_ID);
+  const btn    = document.getElementById("submit-btn");
+  const errBox = document.getElementById("form-error");
+  const done   = document.getElementById("done");
+
+  function showError(msg) {
+    errBox.textContent = msg;
+    errBox.classList.add("show");
+  }
+
+  // Mirror the submission to our own Supabase table. Never allowed to block or
+  // break the Default booking flow — fire and forget, swallow failures.
+  function mirror(responses) {
+    try {
+      const payload = JSON.stringify({
+        ...responses,
+        page_url: window.location.href,
+        referrer: document.referrer || null,
+        utm: Object.fromEntries(new URLSearchParams(window.location.search)),
+      });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon("/api/submit", new Blob([payload], { type: "application/json" }));
+      } else {
+        fetch("/api/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: payload,
+          keepalive: true,
+        }).catch(() => {});
+      }
+    } catch (_) { /* no-op */ }
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!form.reportValidity()) return;
+
+    errBox.classList.remove("show");
+    btn.disabled = true;
+    btn.textContent = "Loading available times…";
+
+    const formData  = new FormData(event.currentTarget);
+    const responses = Object.fromEntries(formData.entries());
+
+    mirror(responses);
+
+    try {
+      const result = await DefaultPixelSDK.submitForm({
+        pixelFormId: PIXEL_ID,
+        responses,
+      });
+
+      // Default routes to the right meeting holder and hands back a scheduler
+      // URL. If it mounted the scheduler itself, #scheduler is already filled.
+      const url = result && (result.url || result.schedulerUrl || result.redirectUrl);
+
+      if (url) {
+        window.location.href = url;
+        return;
+      }
+
+      form.classList.add("hidden");
+      done.classList.add("show");
+    } catch (err) {
+      console.error("[booking] submitForm failed", err);
+      btn.disabled = false;
+      btn.textContent = "Find a time";
+      showError(
+        "Something went wrong on our end. Email hello@ohmd.com and we'll get you booked."
+      );
+    }
+  });
+</script>
+
+</body>
+</html>

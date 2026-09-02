@@ -1,0 +1,7 @@
+{
+  "name": "ohmd-booking",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "OhMD booking page — Default form embed with Supabase mirror"
+}
