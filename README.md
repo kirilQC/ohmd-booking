@@ -48,6 +48,12 @@ and drive the routing rules. Renaming one breaks routing.
 `schedulerOrigins` includes `window.location.origin` so the scheduler works on
 preview deploys as well as the production domain.
 
+**Default also has to allowlist the domain.** The SDK loads and initializes on
+any origin, but `/api/pixel/scheduler-style` returns `403` until the domain is
+added to the pixel's allowed domains in Default. Add the production domain (and
+`*.vercel.app` if you want previews to work) there before testing a real
+booking, otherwise the form submits and the scheduler never appears.
+
 ## Local
 
 ```sh
