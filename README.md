@@ -33,6 +33,21 @@ No build step, no dependencies.
 If the env vars are absent the page still works end to end; the mirror is just
 skipped and logged.
 
+## Testing a submission
+
+Two ways to check a deploy without guessing:
+
+- **`GET /api/submit`** — open it in a browser. Reports whether both env vars
+  are set, whether the table is reachable with that key, and the current row
+  count. Reads no lead data.
+- **`?debug=1`** — e.g. `https://book.ohmd.com/?debug=1`. Logs the payload, the
+  Supabase mirror response and Default's raw result to the console, and blocks
+  the redirect into the scheduler so you can read them.
+
+A failed Default submit does **not** throw — the SDK resolves with
+`{success:false, status, error}`. The page checks for that explicitly and shows
+an error instead of a false "You're all set", so a lead is never silently lost.
+
 ## Default config
 
 Values came from the embed snippet Default generated. If Default regenerates
@@ -45,6 +60,10 @@ the form, these three need updating together:
 The field `name` attributes (`first_name`, `last_name`, `email`,
 `company_name`, `job_title`, `provider_count`) map to Default's form questions
 and drive the routing rules. Renaming one breaks routing.
+
+`provider_count` is rendered as two radio cards rather than Default's original
+`<select>`, but submits the same `name` and the same two values (`1-30`, `31+`),
+so routing is unaffected. Changing either value breaks it.
 
 `schedulerOrigins` includes `window.location.origin` so the scheduler works on
 preview deploys as well as the production domain.

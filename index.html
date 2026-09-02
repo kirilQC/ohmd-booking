@@ -173,6 +173,77 @@
 
   input:user-invalid { border-color: var(--err); }
 
+  /* ---------- provider count radio group ---------- */
+  fieldset.choice {
+    border: 0;
+    padding: 0;
+    margin: 0 0 17px;
+    min-width: 0;
+  }
+
+  fieldset.choice legend {
+    padding: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    margin-bottom: 7px;
+    color: var(--ink);
+  }
+
+  .opts { display: grid; gap: 10px; }
+
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 15px;
+    background: var(--field);
+    border: 1.5px solid transparent;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, box-shadow .15s;
+  }
+
+  .opt:hover { border-color: #cadbc6; }
+
+  .opt input[type="radio"] {
+    width: 19px;
+    height: 19px;
+    flex: none;
+    margin: 0;
+    padding: 0;
+    accent-color: var(--accent);
+    cursor: pointer;
+    appearance: auto;
+    border-radius: 50%;
+  }
+
+  .opt input[type="radio"]:focus { box-shadow: none; }
+
+  .opt .ol b {
+    display: block;
+    font-size: 15.5px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .opt .ol > span {
+    display: block;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-top: 1px;
+  }
+
+  .opt:has(input:checked) {
+    background: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(52, 71, 60, 0.12);
+  }
+
+  /* Keyboard focus ring sits on the card, not the dot. */
+  .opt:has(input:focus-visible) { border-color: var(--accent); }
+
+  fieldset.choice.invalid .opt { border-color: #f0c4c0; }
+
   button[type="submit"] {
     width: 100%;
     margin-top: 10px;
@@ -351,15 +422,28 @@
                name="job_title" autocomplete="organization-title" required>
       </div>
 
-      <div class="field">
-        <label for="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-provider_count">How many providers are in your practice?</label>
-        <select id="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-provider_count"
-                name="provider_count" required>
-          <option value="" disabled selected>Select one</option>
-          <option value="1-30">1–30 providers</option>
-          <option value="31+">31+ providers</option>
-        </select>
-      </div>
+      <!-- Radio group, not a select. The name and the two values must stay
+           exactly as Default generated them — they drive the routing rules. -->
+      <fieldset class="field choice">
+        <legend>How many providers are in your practice?</legend>
+        <div class="opts">
+          <label class="opt">
+            <input type="radio" name="provider_count" value="1-30"
+                   id="manual-5d8fac5d-c043-4c9f-845e-c491cd500c13-provider_count" required>
+            <span class="ol">
+              <b>1–30 providers</b>
+              <span>Single location or small group</span>
+            </span>
+          </label>
+          <label class="opt">
+            <input type="radio" name="provider_count" value="31+">
+            <span class="ol">
+              <b>31+ providers</b>
+              <span>Multi-site group or health system</span>
+            </span>
+          </label>
+        </div>
+      </fieldset>
 
       <button type="submit" id="submit-btn">Find a time</button>
       <p class="note">20 minutes. A working demo on your own workflows — no pitch deck.</p>
@@ -411,16 +495,41 @@
     errBox.classList.add("show");
   }
 
+  // Add ?debug=1 to the URL to watch the whole chain in the console and get a
+  // readable result from the mirror instead of a silent fire-and-forget.
+  const DEBUG = new URLSearchParams(location.search).has("debug");
+
+  function log(...a) { if (DEBUG) console.log("%c[booking]", "color:#34473c;font-weight:700", ...a); }
+
   // Mirror the submission to our own Supabase table. Never allowed to block or
   // break the Default booking flow — fire and forget, swallow failures.
   function mirror(responses) {
+    const payload = JSON.stringify({
+      ...responses,
+      page_url: window.location.href,
+      referrer: document.referrer || null,
+      utm: Object.fromEntries(new URLSearchParams(window.location.search)),
+    });
+
+    // In debug mode use fetch and await it, so the response is visible. In
+    // normal operation sendBeacon is used because it survives the redirect
+    // into Default's scheduler.
+    if (DEBUG) {
+      return fetch("/api/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+      })
+        .then((r) => r.json())
+        .then((r) => {
+          log("supabase mirror →", r);
+          if (!r.mirrored) console.warn("[booking] lead NOT written to Supabase:", r);
+          return r;
+        })
+        .catch((e) => console.error("[booking] mirror failed", e));
+    }
+
     try {
-      const payload = JSON.stringify({
-        ...responses,
-        page_url: window.location.href,
-        referrer: document.referrer || null,
-        utm: Object.fromEntries(new URLSearchParams(window.location.search)),
-      });
       if (navigator.sendBeacon) {
         navigator.sendBeacon("/api/submit", new Blob([payload], { type: "application/json" }));
       } else {
@@ -434,10 +543,35 @@
     } catch (_) { /* no-op */ }
   }
 
+  // Every field is required. Trim text inputs first so a run of spaces can't
+  // satisfy `required`, then let the browser report the first offender.
+  function validate() {
+    form.querySelectorAll('input[type="text"], input[type="email"]').forEach((el) => {
+      el.value = el.value.trim();
+    });
+
+    const choice = form.querySelector("fieldset.choice");
+    const picked = form.querySelector('input[name="provider_count"]:checked');
+    choice.classList.toggle("invalid", !picked);
+
+    if (!form.reportValidity()) {
+      const bad = form.querySelector(":invalid");
+      if (bad) bad.scrollIntoView({ behavior: "smooth", block: "center" });
+      return false;
+    }
+    return true;
+  }
+
+  form.addEventListener("change", (e) => {
+    if (e.target.name === "provider_count") {
+      form.querySelector("fieldset.choice").classList.remove("invalid");
+    }
+  });
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    if (!form.reportValidity()) return;
+    if (!validate()) return;
 
     errBox.classList.remove("show");
     btn.disabled = true;
@@ -446,7 +580,10 @@
     const formData  = new FormData(event.currentTarget);
     const responses = Object.fromEntries(formData.entries());
 
-    mirror(responses);
+    log("submitting", responses);
+
+    const mirrored = mirror(responses);
+    if (DEBUG) await mirrored;
 
     try {
       const result = await DefaultPixelSDK.submitForm({
@@ -454,13 +591,35 @@
         responses,
       });
 
+      log("Default submitForm →", result);
+
+      // The SDK resolves with {success:false,status,error} instead of throwing,
+      // so a failed submit looks like a successful one unless we check. Without
+      // this the visitor sees "You're all set" and the lead is silently lost.
+      if (result && result.success === false) {
+        throw new Error(result.error || `Default returned status ${result.status}`);
+      }
+
       // Default routes to the right meeting holder and hands back a scheduler
       // URL. If it mounted the scheduler itself, #scheduler is already filled.
       const url = result && (result.url || result.schedulerUrl || result.redirectUrl);
 
       if (url) {
+        // In debug mode, stop before the redirect so the console stays readable.
+        if (DEBUG) {
+          console.warn("[booking] would redirect to:", url, "— blocked by ?debug=1");
+          btn.disabled = false;
+          btn.textContent = "Find a time";
+          return;
+        }
         window.location.href = url;
         return;
+      }
+
+      // No URL and no scheduler mounted means we can't actually get them to a
+      // time, so don't claim success.
+      if (!document.getElementById("scheduler").hasChildNodes()) {
+        throw new Error("Default returned no scheduler URL");
       }
 
       form.classList.add("hidden");
