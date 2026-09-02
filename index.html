@@ -459,8 +459,6 @@
 
   <p class="trust">Trusted by 1,200+ healthcare organizations</p>
 
-  <!-- Default renders the scheduler here once the form is submitted -->
-  <div id="scheduler"></div>
 </main>
 
 <footer>
@@ -562,6 +560,14 @@
     return true;
   }
 
+  // Only source of truth for "they actually booked" — the scheduler overlay
+  // posts this back through the SDK.
+  DefaultPixelSDK.scheduler.onMeetingBooked(() => {
+    log("meeting booked");
+    form.classList.add("hidden");
+    done.classList.add("show");
+  });
+
   form.addEventListener("change", (e) => {
     if (e.target.name === "provider_count") {
       form.querySelector("fieldset.choice").classList.remove("invalid");
@@ -596,34 +602,41 @@
       // The SDK resolves with {success:false,status,error} instead of throwing,
       // so a failed submit looks like a successful one unless we check. Without
       // this the visitor sees "You're all set" and the lead is silently lost.
-      if (result && result.success === false) {
-        throw new Error(result.error || `Default returned status ${result.status}`);
+      if (!result || result.success === false) {
+        throw new Error(
+          (result && result.error) || "Default rejected the submission"
+        );
       }
 
-      // Default routes to the right meeting holder and hands back a scheduler
-      // URL. If it mounted the scheduler itself, #scheduler is already filled.
-      const url = result && (result.url || result.schedulerUrl || result.redirectUrl);
+      // Default routes to the right meeting holder and hands back exactly one
+      // of two shapes: {redirect:{url}} or {scheduler:{url}}. In the scheduler
+      // case the SDK has already mounted its own full-screen overlay — it never
+      // renders into an element of ours.
+      const redirectUrl = result.redirect && result.redirect.url;
+      const schedulerUrl = result.scheduler && result.scheduler.url;
 
-      if (url) {
+      if (redirectUrl) {
         // In debug mode, stop before the redirect so the console stays readable.
         if (DEBUG) {
-          console.warn("[booking] would redirect to:", url, "— blocked by ?debug=1");
+          console.warn("[booking] would redirect to:", redirectUrl, "— blocked by ?debug=1");
           btn.disabled = false;
           btn.textContent = "Find a time";
           return;
         }
-        window.location.href = url;
+        window.location.href = redirectUrl;
         return;
       }
 
-      // No URL and no scheduler mounted means we can't actually get them to a
-      // time, so don't claim success.
-      if (!document.getElementById("scheduler").hasChildNodes()) {
-        throw new Error("Default returned no scheduler URL");
+      // Neither handoff means we can't get them to a time, so don't claim success.
+      if (!schedulerUrl) {
+        throw new Error("Default returned no scheduler and no redirect");
       }
 
-      form.classList.add("hidden");
-      done.classList.add("show");
+      // The scheduler overlay is now covering the page. Leave the form intact
+      // behind it and re-enable the button, so closing the overlay without
+      // booking doesn't strand them. "You're all set" waits for onMeetingBooked.
+      btn.disabled = false;
+      btn.textContent = "Find a time";
     } catch (err) {
       console.error("[booking] submitForm failed", err);
       btn.disabled = false;
