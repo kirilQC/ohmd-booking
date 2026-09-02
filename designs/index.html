@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OhMD booking page — 10 design directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CHROME — the picker UI around the designs. Not part of any design.
+   ============================================================ */
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: #0b0e11;
+  font: 400 15px/1.5 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #e7ecf1;
+  -webkit-font-smoothing: antialiased;
+}
+
+#chrome {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(11, 14, 17, 0.88);
+  backdrop-filter: saturate(140%) blur(14px);
+  border-bottom: 1px solid #22282f;
+}
+
+.chrome-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 10px 20px;
+}
+
+.chrome-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 9px;
+}
+
+.chrome-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #7d8b99;
+  white-space: nowrap;
+}
+
+.tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 1px;
+}
+
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #9aa8b5;
+  background: #161b21;
+  border: 1px solid #262d35;
+  border-radius: 7px;
+  padding: 6px 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  transition: all .12s;
+  white-space: nowrap;
+}
+
+.tab:hover { color: #e7ecf1; border-color: #3a444f; }
+
+.tab[aria-selected="true"] {
+  background: #e7ecf1;
+  color: #0b0e11;
+  border-color: #e7ecf1;
+}
+
+.tab .n {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: .55;
+  font-variant-numeric: tabular-nums;
+}
+
+.widths { display: flex; gap: 4px; }
+
+.wbtn {
+  font: inherit;
+  font-size: 12px;
+  color: #9aa8b5;
+  background: #161b21;
+  border: 1px solid #262d35;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.wbtn[aria-pressed="true"] { background: #e7ecf1; color: #0b0e11; border-color: #e7ecf1; }
+
+#meta {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 16px 20px 10px;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+#meta h2 {
+  margin: 0;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+#meta p {
+  margin: 0;
+  color: #8b98a6;
+  font-size: 13.5px;
+  line-height: 1.5;
+  flex: 1;
+  min-width: 280px;
+}
+
+#frame-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 4px 20px 40px;
+}
+
+#frame {
+  width: 100%;
+  max-width: 100%;
+  height: 780px;
+  border: 1px solid #262d35;
+  border-radius: 12px;
+  background: #fff;
+  transition: max-width .2s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+#frame.w-mobile { max-width: 400px; }
+#frame.w-tablet { max-width: 760px; }
+
+.hint {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+  color: #6d7a88;
+  font-size: 13px;
+}
+
+kbd {
+  background: #161b21;
+  border: 1px solid #2d353e;
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font: 500 11px/1.6 JetBrains Mono, monospace;
+  color: #9aa8b5;
+}
+</style>
+</head>
+<body>
+
+<div id="chrome">
+  <div class="chrome-inner">
+    <div class="chrome-top">
+      <div class="chrome-title">OhMD booking · 10 directions</div>
+      <div class="widths">
+        <button class="wbtn" data-w="desktop" aria-pressed="true">Desktop</button>
+        <button class="wbtn" data-w="tablet" aria-pressed="false">Tablet</button>
+        <button class="wbtn" data-w="mobile" aria-pressed="false">Mobile</button>
+      </div>
+    </div>
+    <div class="tabs" id="tabs" role="tablist"></div>
+  </div>
+</div>
+
+<div id="meta">
+  <h2 id="meta-name"></h2>
+  <p id="meta-blurb"></p>
+</div>
+
+<div id="frame-wrap">
+  <iframe id="frame" title="Design preview"></iframe>
+</div>
+
+<p class="hint">
+  Use <kbd>←</kbd> <kbd>→</kbd> to flip through. Each design is fully live — type in the fields,
+  focus states and hovers all work. Tell me a number (or mix two) and I'll rebuild
+  <code>index.html</code> as the real page.
+</p>
+
+<script>
+/* ============================================================
+   Shared form model — every design renders the same six Default fields.
+   ============================================================ */
+const FIELDS = [
+  { name: "first_name",     label: "First name",   type: "text",  half: true,  ac: "given-name" },
+  { name: "last_name",      label: "Last name",    type: "text",  half: true,  ac: "family-name" },
+  { name: "email",          label: "Work email",   type: "email", ac: "email" },
+  { name: "company_name",   label: "Practice / organization", type: "text", ac: "organization" },
+  { name: "job_title",      label: "Job title",    type: "text",  ac: "organization-title" },
+  { name: "provider_count", label: "How many providers are in your practice?", type: "select",
+    options: [["", "Select one"], ["1-30", "1–30 providers"], ["31+", "31+ providers"]] },
+];
+
+function fields(opts = {}) {
+  const { floating = false, placeholders = false, noLabels = false } = opts;
+  let html = "";
+  let i = 0;
+
+  while (i < FIELDS.length) {
+    const f = FIELDS[i];
+
+    if (f.half && FIELDS[i + 1] && FIELDS[i + 1].half) {
+      html += `<div class="row">${field(FIELDS[i], opts)}${field(FIELDS[i + 1], opts)}</div>`;
+      i += 2;
+    } else {
+      html += field(f, opts);
+      i += 1;
+    }
+  }
+  return html;
+}
+
+function field(f, { floating, placeholders, noLabels }) {
+  const id = "f-" + f.name;
+  const ph = placeholders ? ` placeholder="${f.label}"` : (floating ? ' placeholder=" "' : "");
+  const label = noLabels ? "" : `<label for="${id}">${f.label}</label>`;
+
+  let control;
+  if (f.type === "select") {
+    control =
+      `<select id="${id}" name="${f.name}" required>` +
+      f.options.map(([v, t], k) =>
+        `<option value="${v}"${v === "" ? " disabled selected" : ""}>${t}</option>`).join("") +
+      `</select>`;
+  } else {
+    control = `<input type="${f.type}" id="${id}" name="${f.name}"` +
+      ` autocomplete="${f.ac || "off"}"${ph} required>`;
+  }
+
+  // Floating-label variants need the control before the label in the DOM.
+  const inner = floating ? control + label : label + control;
+  return `<div class="field${f.half ? " half" : ""}${floating ? " float" : ""}">${inner}</div>`;
+}
+
+const CTA = "Find a time";
+const NOTE = "20 minutes. A working demo on your own workflows — no pitch deck.";
+
+/* Proof points pulled from OhMD's own published numbers. */
+const STATS = [
+  ["68%", "fewer staff-answered calls"],
+  ["22%", "call volume drop in 4 months"],
+  ["85+", "EHR / PM integrations"],
+  ["1,200+", "healthcare orgs"],
+];
+
+/* ============================================================
+   The 10 designs. Each is a full standalone document.
+   ============================================================ */
+const FONTS = `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">`;
+
+const RESET = `
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{-webkit-font-smoothing:antialiased;min-height:100vh}
+input,select,button,textarea{font:inherit;color:inherit}
+select{appearance:none}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:520px){.row{grid-template-columns:1fr;gap:0}}
+form{margin:0}
+`;
+
+const CHEV = (c) => `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='${encodeURIComponent(c)}' d='M1.4 1.4 6 6l4.6-4.6'/%3E%3C/svg%3E")`;
+
+const DESIGNS = [];
+
+/* ---------- 1. Clinical Light (refined version of what's live) ---------- */
+DESIGNS.push({
+  name: "1 · Clinical Light",
+  short: "Clinical",
+  blurb: "A tightened version of what's live now. Single card, teal accent, tabular proof strip under the fold. The safe default — reads as credible clinical software and won't age.",
+  html: `<style>${RESET}
+body{background:#f5f8f8;font-family:Inter,sans-serif;color:#0e1a23;display:flex;flex-direction:column}
+.wrap{flex:1;width:100%;max-width:1000px;margin:0 auto;padding:56px 24px;display:grid;grid-template-columns:1fr 400px;gap:64px;align-items:start}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:36px}
+.mark{width:32px;height:32px;border-radius:9px;background:#0f8b8d;color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px}
+.bn{font-weight:600;letter-spacing:-.01em}
+h1{font-size:40px;line-height:1.1;letter-spacing:-.03em;margin:0 0 14px;font-weight:650}
+.sub{color:#5a6b78;font-size:17px;line-height:1.6;margin:0 0 36px;max-width:44ch}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#dfe5ea;border:1px solid #dfe5ea;border-radius:12px;overflow:hidden}
+.stat{background:#fff;padding:18px 20px}
+.stat b{display:block;font-size:24px;letter-spacing:-.025em;color:#0f8b8d;font-weight:650}
+.stat span{font-size:12.5px;color:#5a6b78;line-height:1.4;display:block;margin-top:2px}
+.card{background:#fff;border:1px solid #dfe5ea;border-radius:16px;padding:28px;box-shadow:0 1px 2px rgba(14,26,35,.04),0 12px 32px -16px rgba(14,26,35,.14);position:sticky;top:32px}
+.ct{font-size:15px;font-weight:600;margin:0 0 20px;letter-spacing:-.01em}
+.field{margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:550;margin-bottom:6px}
+input,select{width:100%;padding:11px 12px;font-size:15px;background:#fff;border:1px solid #dfe5ea;border-radius:9px;outline:none;transition:border-color .12s,box-shadow .12s}
+select{background-image:${CHEV("#5a6b78")};background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+input:focus,select:focus{border-color:#0f8b8d;box-shadow:0 0 0 3px rgba(15,139,141,.14)}
+button{width:100%;margin-top:8px;padding:13px;font-size:15.5px;font-weight:600;color:#fff;background:#0f8b8d;border:0;border-radius:9px;cursor:pointer;transition:background .12s}
+button:hover{background:#0b6f71}
+.note{margin:14px 0 0;font-size:12.5px;color:#5a6b78;text-align:center;line-height:1.45}
+@media(max-width:900px){.wrap{grid-template-columns:1fr;gap:36px;padding:36px 20px}h1{font-size:31px}.card{position:static}}
+</style>
+<div class="wrap">
+  <div>
+    <div class="brand"><div class="mark">Oh</div><div class="bn">OhMD</div></div>
+    <h1>Your front desk is drowning in routine calls.</h1>
+    <p class="sub">See how OhMD's AI agent handles scheduling, refills and referrals — inside the EHR you already use.</p>
+    <div class="stats">${STATS.map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("")}</div>
+  </div>
+  <div class="card">
+    <p class="ct">Book a demo</p>
+    <form>${fields()}<button type="submit">${CTA}</button></form>
+    <p class="note">${NOTE}</p>
+  </div>
+</div>`
+});
+
+/* ---------- 2. Split Screen ---------- */
+DESIGNS.push({
+  name: "2 · Split Screen",
+  short: "Split",
+  blurb: "Full-bleed teal panel carries the story and a customer quote; the form lives on clean white to the right. Highest-converting pattern in B2B SaaS and the most obviously 'designed' of the safe options.",
+  html: `<style>${RESET}
+body{font-family:Inter,sans-serif;color:#0e1a23;display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+.left{background:linear-gradient(155deg,#0b5f61 0%,#0f8b8d 55%,#14a3a0 100%);color:#fff;padding:56px 52px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.left::after{content:"";position:absolute;width:520px;height:520px;right:-220px;bottom:-240px;border-radius:50%;background:rgba(255,255,255,.07)}
+.left::before{content:"";position:absolute;width:300px;height:300px;left:-140px;top:-120px;border-radius:50%;background:rgba(255,255,255,.05)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;position:relative;z-index:1}
+.mark{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);display:grid;place-items:center;font-size:13px;font-weight:700}
+.lmid{margin-top:auto;position:relative;z-index:1}
+h1{font-size:40px;line-height:1.12;letter-spacing:-.03em;margin:0 0 16px;font-weight:650;max-width:19ch}
+.sub{font-size:16.5px;line-height:1.6;opacity:.88;margin:0 0 40px;max-width:38ch}
+.quote{border-left:2px solid rgba(255,255,255,.35);padding-left:18px;margin-bottom:40px}
+.quote p{margin:0 0 10px;font-size:16px;line-height:1.55}
+.quote cite{font-style:normal;font-size:13px;opacity:.75}
+.srow{display:flex;gap:36px;position:relative;z-index:1;flex-wrap:wrap}
+.srow div b{display:block;font-size:27px;letter-spacing:-.025em;font-weight:650}
+.srow div span{font-size:12px;opacity:.8;line-height:1.35;display:block;max-width:14ch}
+.right{background:#fff;padding:56px 52px;display:flex;align-items:center;justify-content:center;overflow-y:auto}
+.fw{width:100%;max-width:400px}
+h2{font-size:26px;letter-spacing:-.025em;margin:0 0 6px;font-weight:640}
+.rs{color:#5a6b78;font-size:14.5px;margin:0 0 28px}
+.field{margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:550;margin-bottom:6px}
+input,select{width:100%;padding:11px 12px;font-size:15px;background:#fbfcfc;border:1px solid #dfe5ea;border-radius:9px;outline:none;transition:.12s}
+select{background-image:${CHEV("#5a6b78")};background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+input:focus,select:focus{background:#fff;border-color:#0f8b8d;box-shadow:0 0 0 3px rgba(15,139,141,.13)}
+button{width:100%;margin-top:8px;padding:13px;font-size:15.5px;font-weight:600;color:#fff;background:#0f8b8d;border:0;border-radius:9px;cursor:pointer}
+button:hover{background:#0b6f71}
+.note{margin:14px 0 0;font-size:12.5px;color:#5a6b78;text-align:center}
+@media(max-width:900px){body{grid-template-columns:1fr}.left{padding:36px 24px}.left .quote,.left .srow{display:none}h1{font-size:29px}.right{padding:36px 24px}}
+</style>
+<div class="left">
+  <div class="brand"><div class="mark">Oh</div><div>OhMD</div></div>
+  <div class="lmid">
+    <h1>Give your front desk its day back.</h1>
+    <p class="sub">Nia answers the routine calls — scheduling, refills, referrals — inside the EHR you already run on.</p>
+    <div class="quote">
+      <p>"We cut staff-answered calls by more than half without hiring a single person."</p>
+      <cite>Practice Manager, multi-site orthopedics</cite>
+    </div>
+    <div class="srow">${STATS.slice(0, 3).map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join("")}</div>
+  </div>
+</div>
+<div class="right">
+  <div class="fw">
+    <h2>Book a demo</h2>
+    <p class="rs">Pick a time on the next screen.</p>
+    <form>${fields()}<button type="submit">${CTA}</button></form>
+    <p class="note">${NOTE}</p>
+  </div>
+</div>`
+});
+
+/* ---------- 3. Dark Premium ---------- */
+DESIGNS.push({
+  name: "3 · Dark Premium",
+  short: "Dark",
+  blurb: "Near-black with a teal glow and a glass card. Reads expensive and modern — closer to a dev-tools brand than a healthcare vendor. Strong differentiator, slight risk with conservative practice managers.",
+  html: `<style>${RESET}
+body{background:#07090b;font-family:Inter,sans-serif;color:#e9eef2;display:flex;flex-direction:column;position:relative;overflow-x:hidden}
+body::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(700px 420px at 18% -8%,rgba(20,163,160,.20),transparent 62%),
+  radial-gradient(620px 460px at 92% 12%,rgba(28,110,190,.14),transparent 60%);pointer-events:none}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(900px 600px at 50% 0%,#000,transparent 75%)}
+.wrap{position:relative;z-index:1;flex:1;width:100%;max-width:1040px;margin:0 auto;padding:52px 24px 72px;display:grid;grid-template-columns:1fr 410px;gap:60px;align-items:start}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:40px;font-weight:600}
+.mark{width:32px;height:32px;border-radius:9px;background:linear-gradient(150deg,#19b3b0,#0d7173);display:grid;place-items:center;font-size:13px;font-weight:700;color:#04211f;box-shadow:0 0 24px rgba(25,179,176,.4)}
+.pill{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:#8ee0dd;background:rgba(25,179,176,.10);border:1px solid rgba(25,179,176,.26);border-radius:999px;padding:5px 12px;margin-bottom:20px}
+.dot{width:5px;height:5px;border-radius:50%;background:#19b3b0;box-shadow:0 0 8px #19b3b0}
+h1{font-size:42px;line-height:1.1;letter-spacing:-.035em;margin:0 0 16px;font-weight:650}
+h1 em{font-style:normal;background:linear-gradient(96deg,#19b3b0,#6ee0ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:#93a3b0;font-size:17px;line-height:1.62;margin:0 0 40px;max-width:42ch}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:rgba(255,255,255,.026);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px 18px;backdrop-filter:blur(8px)}
+.stat b{display:block;font-size:23px;letter-spacing:-.025em;color:#fff;font-weight:650}
+.stat span{font-size:12px;color:#8794a1;line-height:1.4;display:block;margin-top:3px}
+.card{background:rgba(255,255,255,.042);border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:28px;backdrop-filter:blur(20px) saturate(150%);box-shadow:0 30px 70px -30px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.09);position:sticky;top:32px}
+.ct{font-size:15.5px;font-weight:600;margin:0 0 20px;letter-spacing:-.01em}
+.field{margin-bottom:15px}
+label{display:block;font-size:12.5px;font-weight:500;margin-bottom:6px;color:#a9b6c2}
+input,select{width:100%;padding:11px 12px;font-size:15px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.11);border-radius:9px;color:#e9eef2;outline:none;transition:.14s}
+select{background-image:${CHEV("#93a3b0")};background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+select option{background:#0d1116;color:#e9eef2}
+input:focus,select:focus{border-color:rgba(25,179,176,.65);background:rgba(25,179,176,.07);box-shadow:0 0 0 3px rgba(25,179,176,.15)}
+button{width:100%;margin-top:10px;padding:13px;font-size:15.5px;font-weight:600;color:#04211f;background:linear-gradient(150deg,#22c9c4,#0f9694);border:0;border-radius:9px;cursor:pointer;transition:.14s;box-shadow:0 8px 26px -8px rgba(25,179,176,.65)}
+button:hover{filter:brightness(1.09)}
+.note{margin:14px 0 0;font-size:12.5px;color:#7e8b98;text-align:center;line-height:1.45}
+@media(max-width:900px){.wrap{grid-template-columns:1fr;gap:34px;padding:34px 20px 56px}h1{font-size:31px}.card{position:static}}
+</style>
+<div class="grid"></div>
+<div class="wrap">
+  <div>
+    <div class="brand"><div class="mark">Oh</div><div>OhMD</div></div>
+    <div class="pill"><span class="dot"></span>Nia · AI patient communication</div>
+    <h1>Route the routine calls to <em>an agent that never puts anyone on hold.</em></h1>
+    <p class="sub">Scheduling, refills, referrals — handled inside the EHR you already run on. HIPAA-compliant, SOC 2, 85+ integrations.</p>
+    <div class="stats">${STATS.map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("")}</div>
+  </div>
+  <div class="card">
+    <p class="ct">Book a demo</p>
+    <form>${fields()}<button type="submit">${CTA}</button></form>
+    <p class="note">${NOTE}</p>
+  </div>
+</div>`
+});
+
+/* ---------- 4. Editorial Serif ---------- */
+DESIGNS.push({
+  name: "4 · Editorial Serif",
+  short: "Editorial",
+  blurb: "Big Fraunces serif on warm paper, hairline underline inputs, no card at all. Feels like a considered publication rather than a lead-gen form — disarming for physician-owners who are sick of SaaS pages.",
+  html: `<style>${RESET}
+body{background:#f7f4ee;font-family:"DM Sans",sans-serif;color:#1d1a15}
+.wrap{max-width:640px;margin:0 auto;padding:72px 28px 88px}
+.brand{display:flex;align-items:center;gap:11px;margin-bottom:64px}
+.mark{width:31px;height:31px;border-radius:50%;background:#1d1a15;color:#f7f4ee;display:grid;place-items:center;font:700 12px Fraunces,serif}
+.bn{font-family:Fraunces,serif;font-weight:600;font-size:18px;letter-spacing:-.01em}
+.eyebrow{font-size:11.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#8c8375;margin:0 0 22px}
+h1{font-family:Fraunces,serif;font-size:46px;line-height:1.08;letter-spacing:-.025em;font-weight:600;margin:0 0 22px}
+.sub{font-size:18px;line-height:1.65;color:#57503f;margin:0 0 12px;max-width:46ch}
+.rule{height:1px;background:#ddd6c8;margin:44px 0}
+.pn{font-family:Fraunces,serif;font-size:23px;font-weight:600;letter-spacing:-.02em;margin:0 0 28px}
+.field{margin-bottom:26px}
+label{display:block;font-size:12px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:#8c8375;margin-bottom:7px}
+input,select{width:100%;padding:7px 2px 9px;font-size:18px;font-family:Fraunces,serif;background:transparent;border:0;border-bottom:1px solid #cfc6b4;border-radius:0;outline:none;transition:border-color .16s}
+select{background-image:${CHEV("#8c8375")};background-repeat:no-repeat;background-position:right 2px center;padding-right:26px;color:#1d1a15}
+input:focus,select:focus{border-bottom-color:#1d1a15;border-bottom-width:2px;padding-bottom:8px}
+button{margin-top:14px;padding:15px 34px;font-size:15px;font-weight:500;letter-spacing:.02em;color:#f7f4ee;background:#1d1a15;border:0;border-radius:999px;cursor:pointer;transition:.16s}
+button:hover{background:#3a3428;transform:translateY(-1px)}
+.note{margin:22px 0 0;font-size:13.5px;color:#8c8375;line-height:1.55;max-width:42ch}
+.proof{margin-top:56px;padding-top:32px;border-top:1px solid #ddd6c8;display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.proof div b{display:block;font-family:Fraunces,serif;font-size:30px;font-weight:600;letter-spacing:-.025em}
+.proof div span{font-size:12.5px;color:#8c8375;line-height:1.45;display:block;margin-top:2px}
+@media(max-width:520px){.wrap{padding:44px 22px 60px}h1{font-size:33px}}
+</style>
+<div class="wrap">
+  <div class="brand"><div class="mark">Oh</div><div class="bn">OhMD</div></div>
+  <p class="eyebrow">Request a demonstration</p>
+  <h1>The average practice loses six hours a day to calls it never needed to answer.</h1>
+  <p class="sub">We'll show you exactly which of yours can be handled without a human — using your own call mix, not a canned script.</p>
+  <div class="rule"></div>
+  <p class="pn">Tell us about your practice</p>
+  <form>${fields()}<button type="submit">${CTA} →</button></form>
+  <p class="note">${NOTE}</p>
+  <div class="proof">${STATS.map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join("")}</div>
+</div>`
+});
+
+/* ---------- 5. Stat-Led Landing ---------- */
+DESIGNS.push({
+  name: "5 · Stat-Led Landing",
+  short: "Stat-led",
+  blurb: "A real (short) landing page: hero, numbers band, three-step how-it-works, integration logos, then the form. Best if the link is going cold — it does the selling before it asks for anything.",
+  html: `<style>${RESET}
+body{background:#fff;font-family:Inter,sans-serif;color:#0e1a23}
+nav{border-bottom:1px solid #e8edf0;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);z-index:5}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600}
+.mark{width:29px;height:29px;border-radius:8px;background:#0f8b8d;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
+.navcta{font-size:13.5px;font-weight:550;color:#0f8b8d;text-decoration:none}
+.hero{text-align:center;padding:64px 24px 48px;max-width:760px;margin:0 auto}
+.pill{display:inline-block;font-size:12.5px;font-weight:550;color:#0b6f71;background:#e6f4f4;border-radius:999px;padding:5px 13px;margin-bottom:20px}
+h1{font-size:46px;line-height:1.08;letter-spacing:-.035em;margin:0 0 16px;font-weight:660}
+.hsub{font-size:18px;line-height:1.6;color:#5a6b78;margin:0 auto;max-width:52ch}
+.band{background:#0e1a23;color:#fff;padding:34px 24px}
+.bandin{max-width:960px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
+.bandin div b{display:block;font-size:31px;letter-spacing:-.03em;font-weight:660;color:#4fd1cd}
+.bandin div span{font-size:12.5px;color:#93a3b0;line-height:1.4;display:block;margin-top:4px}
+.steps{max-width:960px;margin:0 auto;padding:60px 24px 8px;display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.step .num{width:28px;height:28px;border-radius:8px;background:#e6f4f4;color:#0b6f71;display:grid;place-items:center;font-size:13px;font-weight:700;margin-bottom:12px}
+.step h3{font-size:16px;margin:0 0 6px;letter-spacing:-.015em;font-weight:600}
+.step p{font-size:14.5px;color:#5a6b78;line-height:1.6;margin:0}
+.logos{max-width:960px;margin:0 auto;padding:48px 24px;text-align:center}
+.logos p{font-size:11.5px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:#8b98a4;margin:0 0 18px}
+.logos div{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.logos span{font-size:13.5px;font-weight:550;color:#5a6b78;border:1px solid #e8edf0;border-radius:8px;padding:8px 14px;background:#fafbfc}
+.fsec{background:#f5f8f8;border-top:1px solid #e8edf0;padding:60px 24px 72px}
+.fin{max-width:460px;margin:0 auto}
+.fin h2{font-size:29px;letter-spacing:-.028em;text-align:center;margin:0 0 8px;font-weight:650}
+.fin .fs{text-align:center;color:#5a6b78;font-size:15px;margin:0 0 28px}
+.card{background:#fff;border:1px solid #e2e8ec;border-radius:16px;padding:28px;box-shadow:0 1px 2px rgba(14,26,35,.04),0 14px 34px -18px rgba(14,26,35,.16)}
+.field{margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:550;margin-bottom:6px}
+input,select{width:100%;padding:11px 12px;font-size:15px;background:#fff;border:1px solid #dfe5ea;border-radius:9px;outline:none;transition:.12s}
+select{background-image:${CHEV("#5a6b78")};background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+input:focus,select:focus{border-color:#0f8b8d;box-shadow:0 0 0 3px rgba(15,139,141,.14)}
+button{width:100%;margin-top:8px;padding:13px;font-size:15.5px;font-weight:600;color:#fff;background:#0f8b8d;border:0;border-radius:9px;cursor:pointer}
+button:hover{background:#0b6f71}
+.note{margin:14px 0 0;font-size:12.5px;color:#5a6b78;text-align:center}
+@media(max-width:820px){h1{font-size:32px}.bandin{grid-template-columns:1fr 1fr;gap:22px}.steps{grid-template-columns:1fr;gap:26px;padding:44px 22px 0}.hero{padding:44px 22px 34px}}
+</style>
+<nav>
+  <div class="brand"><div class="mark">Oh</div><div>OhMD</div></div>
+  <a class="navcta" href="#book">Book a demo →</a>
+</nav>
+<div class="hero">
+  <div class="pill">Nia · AI patient communication</div>
+  <h1>68% fewer staff-answered calls. No new headcount.</h1>
+  <p class="hsub">OhMD's AI agent handles scheduling, refills and referrals inside the EHR your team already uses.</p>
+</div>
+<div class="band"><div class="bandin">${STATS.map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join("")}</div></div>
+<div class="steps">
+  <div class="step"><div class="num">1</div><h3>Connect your EHR</h3><p>85+ systems supported — athenahealth, Office Practicum, Veradigm and more. No rip-and-replace.</p></div>
+  <div class="step"><div class="num">2</div><h3>Nia takes the routine calls</h3><p>Scheduling, refill requests, referrals and FAQs, over voice and text, 24/7.</p></div>
+  <div class="step"><div class="num">3</div><h3>Staff handle what matters</h3><p>Your team gets the calls that actually need a person. Everything else is already done.</p></div>
+</div>
+<div class="logos">
+  <p>Works with the systems you already run</p>
+  <div><span>athenahealth</span><span>Office Practicum</span><span>Veradigm</span><span>eClinicalWorks</span><span>+81 more</span></div>
+</div>
+<div class="fsec" id="book">
+  <div class="fin">
+    <h2>Book a 20-minute demo</h2>
+    <p class="fs">Tell us about your practice and pick a time.</p>
+    <div class="card">
+      <form>${fields()}<button type="submit">${CTA}</button></form>
+      <p class="note">${NOTE}</p>
+    </div>
+  </div>
+</div>`
+});
+
+/* ---------- 6. Soft Medical ---------- */
+DESIGNS.push({
+  name: "6 · Soft Medical",
+  short: "Soft",
+  blurb: "Big radii, mint and sky pastels, friendly weight. Lowest-intimidation option — aimed squarely at practice managers rather than IT. Warm without being childish.",
+  html: `<style>${RESET}
+body{background:linear-gradient(170deg,#eaf6f5 0%,#f4f9fb 42%,#fdf6f3 100%);font-family:"DM Sans",sans-serif;color:#16302f;display:flex;flex-direction:column}
+.wrap{flex:1;width:100%;max-width:520px;margin:0 auto;padding:52px 22px 64px}
+.brand{display:flex;align-items:center;gap:11px;justify-content:center;margin-bottom:30px}
+.mark{width:36px;height:36px;border-radius:13px;background:#fff;color:#12a89f;display:grid;place-items:center;font-size:14px;font-weight:700;box-shadow:0 4px 14px rgba(18,168,159,.20)}
+.bn{font-weight:700;font-size:17px;letter-spacing:-.01em}
+h1{font-size:34px;line-height:1.15;letter-spacing:-.028em;text-align:center;margin:0 0 12px;font-weight:700}
+.sub{text-align:center;color:#4e6b69;font-size:16.5px;line-height:1.6;margin:0 auto 12px;max-width:34ch}
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:22px 0 26px}
+.chip{font-size:12.5px;font-weight:500;color:#0e7a74;background:rgba(255,255,255,.8);border:1px solid rgba(18,168,159,.18);border-radius:999px;padding:6px 13px}
+.card{background:#fff;border-radius:26px;padding:30px 28px;box-shadow:0 2px 6px rgba(22,48,47,.04),0 24px 50px -22px rgba(22,48,47,.18)}
+.field{margin-bottom:17px}
+label{display:block;font-size:13.5px;font-weight:500;margin-bottom:7px;color:#2c4b49}
+input,select{width:100%;padding:13px 15px;font-size:15.5px;background:#f4faf9;border:1.5px solid transparent;border-radius:14px;outline:none;transition:.15s}
+select{background-image:${CHEV("#4e6b69")};background-repeat:no-repeat;background-position:right 15px center;padding-right:38px}
+input::placeholder{color:#8aa8a5}
+input:focus,select:focus{background:#fff;border-color:#12a89f;box-shadow:0 0 0 4px rgba(18,168,159,.13)}
+button{width:100%;margin-top:10px;padding:15px;font-size:16px;font-weight:700;color:#fff;background:#12a89f;border:0;border-radius:14px;cursor:pointer;transition:.15s;box-shadow:0 8px 20px -8px rgba(18,168,159,.7)}
+button:hover{background:#0e938b;transform:translateY(-1px)}
+.note{margin:16px 0 0;font-size:13px;color:#4e6b69;text-align:center;line-height:1.5}
+.foot{text-align:center;margin-top:26px;font-size:12.5px;color:#6b8886}
+@media(max-width:520px){h1{font-size:27px}.card{padding:24px 20px;border-radius:20px}}
+</style>
+<div class="wrap">
+  <div class="brand"><div class="mark">Oh</div><div class="bn">OhMD</div></div>
+  <h1>Let's get your phones under control.</h1>
+  <p class="sub">A 20-minute look at how Nia handles the calls your front desk shouldn't have to.</p>
+  <div class="chips"><span class="chip">HIPAA-compliant</span><span class="chip">85+ EHR integrations</span><span class="chip">Live in 2 weeks</span></div>
+  <div class="card">
+    <form>${fields({ placeholders: false })}<button type="submit">${CTA}</button></form>
+    <p class="note">${NOTE}</p>
+  </div>
+  <p class="foot">Trusted by 1,200+ healthcare organizations</p>
+</div>`
+});
+
+/* ---------- 7. Bold / Brutalist ---------- */
+DESIGNS.push({
+  name: "7 · Bold Brutalist",
+  short: "Bold",
+  blurb: "Hard black borders, offset shadows, Space Grotesk, a single acid accent. Impossible to ignore and totally unlike every other healthcare vendor. Use if OhMD wants to look like the challenger.",
+  html: `<style>${RESET}
+body{background:#f2f0e9;font-family:"Space Grotesk",sans-serif;color:#0a0a0a}
+.wrap{max-width:1020px;margin:0 auto;padding:40px 24px 72px}
+nav{display:flex;align-items:center;justify-content:space-between;border:2.5px solid #0a0a0a;background:#fff;padding:12px 16px;margin-bottom:34px;box-shadow:5px 5px 0 #0a0a0a}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+.mark{width:30px;height:30px;background:#00e0c6;border:2.5px solid #0a0a0a;display:grid;place-items:center;font-size:12px;font-weight:700}
+.tag{font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:#00e0c6;border:2px solid #0a0a0a;padding:4px 9px}
+.grid{display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:start}
+h1{font-size:52px;line-height:.98;letter-spacing:-.045em;font-weight:700;margin:0 0 20px;text-transform:uppercase}
+h1 mark{background:#00e0c6;padding:0 6px;box-decoration-break:clone}
+.sub{font-size:17px;line-height:1.55;margin:0 0 28px;max-width:40ch;font-weight:400}
+.stats{display:grid;gap:12px}
+.stat{border:2.5px solid #0a0a0a;background:#fff;padding:14px 16px;display:flex;align-items:baseline;gap:14px;box-shadow:4px 4px 0 #0a0a0a}
+.stat b{font-size:28px;letter-spacing:-.035em;font-weight:700;min-width:78px}
+.stat span{font-size:13.5px;line-height:1.35;font-weight:500}
+.card{border:2.5px solid #0a0a0a;background:#fff;padding:26px;box-shadow:8px 8px 0 #0a0a0a}
+.ct{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin:0 0 20px;padding-bottom:12px;border-bottom:2.5px solid #0a0a0a}
+.field{margin-bottom:15px}
+label{display:block;font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+input,select{width:100%;padding:11px 12px;font-size:15px;background:#f2f0e9;border:2.5px solid #0a0a0a;border-radius:0;outline:none;font-weight:500;transition:.1s}
+select{background-image:${CHEV("#0a0a0a")};background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+input:focus,select:focus{background:#fff;box-shadow:3px 3px 0 #00e0c6}
+button{width:100%;margin-top:10px;padding:15px;font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:#00e0c6;color:#0a0a0a;border:2.5px solid #0a0a0a;cursor:pointer;box-shadow:4px 4px 0 #0a0a0a;transition:.1s}
+button:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #0a0a0a}
+button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #0a0a0a}
+.note{margin:14px 0 0;font-size:12.5px;text-align:center;font-weight:500}
+@media(max-width:880px){.grid{grid-template-columns:1fr;gap:26px}h1{font-size:34px}}
+</style>
+<div class="wrap">
+  <nav>
+    <div class="brand"><div class="mark">Oh</div><div>OHMD</div></div>
+    <div class="tag">Nia · AI agent</div>
+  </nav>
+  <div class="grid">
+    <div>
+      <h1>Stop answering <mark>the same call</mark> 40 times a day.</h1>
+      <p class="sub">Nia takes scheduling, refills and referrals off your front desk — inside the EHR you already run on.</p>
+      <div class="stats">${STATS.map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("")}</div>
+    </div>
+    <div class="card">
+      <p class="ct">Book a demo</p>
+      <form>${fields()}<button type="submit">${CTA}</button></form>
+      <p class="note">${NOTE}</p>
+    </div>
+  </div>
+</div>`
+});
+
+/* ---------- 8. Minimal Mono ---------- */
+DESIGNS.push({
+  name: "8 · Minimal Mono",
+  short: "Mono",
+  blurb: "Monospace labels, no card, no colour except one green. Radically quiet — the whole page is the form. Fastest to scan and it reads as technical/trustworthy to IT and EHR admins.",
+  html: `<style>${RESET}
+body{background:#fcfcfc;font-family:Inter,sans-serif;color:#111}
+.wrap{max-width:520px;margin:0 auto;padding:80px 26px 96px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;font-family:"JetBrains Mono",monospace;font-size:12px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:500;letter-spacing:-.01em}
+.mark{width:9px;height:9px;border-radius:50%;background:#00875a}
+.top .r{color:#999;letter-spacing:.02em}
+h1{font-size:29px;line-height:1.25;letter-spacing:-.026em;font-weight:550;margin:0 0 14px;max-width:26ch}
+.sub{font-size:15.5px;line-height:1.65;color:#6b6b6b;margin:0 0 56px;max-width:44ch}
+.sec{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#aaa;padding-bottom:10px;border-bottom:1px solid #ebebeb;margin-bottom:26px}
+.field{margin-bottom:24px}
+label{display:block;font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:#8c8c8c;margin-bottom:8px}
+input,select{width:100%;padding:5px 0 9px;font-size:16px;background:transparent;border:0;border-bottom:1px solid #e0e0e0;border-radius:0;outline:none;transition:border-color .15s}
+select{background-image:${CHEV("#8c8c8c")};background-repeat:no-repeat;background-position:right 1px center;padding-right:24px}
+input:focus,select:focus{border-bottom-color:#00875a}
+input:focus::placeholder{color:#ccc}
+button{margin-top:20px;padding:0;font-family:"JetBrains Mono",monospace;font-size:12.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#111;background:none;border:0;border-bottom:2px solid #00875a;cursor:pointer;padding-bottom:5px;transition:.15s}
+button:hover{color:#00875a;letter-spacing:.1em}
+.note{margin:38px 0 0;font-size:13px;color:#8c8c8c;line-height:1.6;padding-top:22px;border-top:1px solid #ebebeb}
+.kv{margin-top:56px;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:#999;display:grid;gap:7px}
+.kv div{display:flex;justify-content:space-between;gap:16px}
+.kv b{color:#111;font-weight:500}
+@media(max-width:520px){.wrap{padding:48px 22px 64px}.top{margin-bottom:44px}.sub{margin-bottom:40px}}
+</style>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><span class="mark"></span>ohmd</div>
+    <div class="r">book/demo</div>
+  </div>
+  <h1>Book a 20-minute demo.</h1>
+  <p class="sub">We'll walk your actual call mix and show which volume Nia can absorb. No deck, no discovery call first.</p>
+  <div class="sec">Your details</div>
+  <form>${fields()}<button type="submit">${CTA} ↗</button></form>
+  <p class="note">${NOTE}</p>
+  <div class="kv">
+    ${STATS.map(([b, s]) => `<div><span>${s}</span><b>${b}</b></div>`).join("")}
+  </div>
+</div>`
+});
+
+/* ---------- 9. Gradient Mesh ---------- */
+DESIGNS.push({
+  name: "9 · Gradient Mesh",
+  short: "Mesh",
+  blurb: "Aurora blur background, floating-label glass card, gradient CTA. The current SaaS house style — instantly reads as well-funded and modern, at the cost of being less distinctive.",
+  html: `<style>${RESET}
+body{background:#fbfcfe;font-family:Inter,sans-serif;color:#0f172a;position:relative;overflow-x:hidden;display:flex;flex-direction:column}
+.blob{position:fixed;border-radius:50%;filter:blur(90px);opacity:.5;pointer-events:none}
+.b1{width:520px;height:520px;background:#5eead4;top:-180px;left:-120px}
+.b2{width:460px;height:460px;background:#a5b4fc;top:-90px;right:-140px;opacity:.42}
+.b3{width:420px;height:420px;background:#7dd3fc;bottom:-200px;left:34%;opacity:.34}
+.wrap{position:relative;z-index:1;flex:1;width:100%;max-width:500px;margin:0 auto;padding:56px 24px 72px}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:34px}
+.mark{width:33px;height:33px;border-radius:10px;background:linear-gradient(140deg,#14b8a6,#0891b2);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;box-shadow:0 6px 18px -6px rgba(20,184,166,.75)}
+.bn{font-weight:600;letter-spacing:-.015em}
+.pill{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;color:#0f766e;background:rgba(255,255,255,.72);border:1px solid rgba(15,118,110,.15);border-radius:999px;padding:5px 13px;margin-bottom:18px;backdrop-filter:blur(8px)}
+h1{font-size:36px;line-height:1.12;letter-spacing:-.033em;margin:0 0 13px;font-weight:660}
+h1 em{font-style:normal;background:linear-gradient(96deg,#0d9488,#0284c7);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:#52627a;font-size:16.5px;line-height:1.6;margin:0 0 32px;max-width:38ch}
+.card{background:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.9);border-radius:20px;padding:28px;backdrop-filter:blur(24px) saturate(170%);box-shadow:0 1px 2px rgba(15,23,42,.04),0 24px 56px -22px rgba(15,23,42,.24)}
+.field{position:relative;margin-bottom:14px}
+.field.float label{position:absolute;left:13px;top:14px;font-size:15px;color:#8494ab;pointer-events:none;transition:.15s;background:transparent;padding:0 4px}
+.field.float input:focus + label,
+.field.float input:not(:placeholder-shown) + label,
+.field.float select + label{top:-8px;left:10px;font-size:11.5px;font-weight:550;color:#0d9488;background:#fff;border-radius:4px}
+/* A select always shows text, so its label can never sit over the control. */
+.field.float select + label{color:#64748b}
+.field.float select:focus + label{color:#0d9488}
+input,select{width:100%;padding:14px 13px;font-size:15px;background:rgba(255,255,255,.72);border:1px solid #dfe6ee;border-radius:11px;outline:none;transition:.15s}
+select{background-image:${CHEV("#8494ab")};background-repeat:no-repeat;background-position:right 13px center;padding-right:36px;color:#0f172a}
+select:invalid{color:#8494ab}
+input:focus,select:focus{background:#fff;border-color:#14b8a6;box-shadow:0 0 0 3.5px rgba(20,184,166,.14)}
+button{width:100%;margin-top:10px;padding:14px;font-size:15.5px;font-weight:600;color:#fff;background:linear-gradient(96deg,#0d9488,#0284c7);border:0;border-radius:11px;cursor:pointer;transition:.15s;box-shadow:0 10px 26px -10px rgba(13,148,136,.8)}
+button:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.note{margin:14px 0 0;font-size:12.5px;color:#64748b;text-align:center;line-height:1.5}
+.row2{display:flex;gap:22px;margin-top:30px;justify-content:center;flex-wrap:wrap}
+.row2 div{text-align:center}
+.row2 b{display:block;font-size:20px;letter-spacing:-.025em;font-weight:650;background:linear-gradient(96deg,#0d9488,#0284c7);-webkit-background-clip:text;background-clip:text;color:transparent}
+.row2 span{font-size:11.5px;color:#64748b;display:block;max-width:13ch;line-height:1.35}
+@media(max-width:520px){h1{font-size:28px}.wrap{padding:38px 20px 56px}}
+</style>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<div class="wrap">
+  <div class="brand"><div class="mark">Oh</div><div class="bn">OhMD</div></div>
+  <div class="pill">✦ Nia · AI patient communication</div>
+  <h1>Book a demo and see <em>your own call volume drop.</em></h1>
+  <p class="sub">Scheduling, refills, referrals — handled inside the EHR you already use.</p>
+  <div class="card">
+    <form>${fields({ floating: true })}<button type="submit">${CTA}</button></form>
+    <p class="note">${NOTE}</p>
+  </div>
+  <div class="row2">${STATS.slice(0, 3).map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join("")}</div>
+</div>`
+});
+
+/* ---------- 10. Conversational Stepper ---------- */
+DESIGNS.push({
+  name: "10 · Conversational Steps",
+  short: "Stepper",
+  blurb: "Three short steps with a progress bar instead of one intimidating column. Highest completion rate of the ten, and the provider-count question lands last where it feels like qualifying rather than gatekeeping. Fully working — click through it.",
+  html: `<style>${RESET}
+body{background:#0e1a23;font-family:Inter,sans-serif;color:#0e1a23;display:grid;place-items:center;padding:32px 20px;min-height:100vh}
+.shell{width:100%;max-width:470px}
+.brand{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:22px;color:#fff;font-weight:600}
+.mark{width:31px;height:31px;border-radius:9px;background:#19b3b0;color:#04211f;display:grid;place-items:center;font-size:12.5px;font-weight:700}
+.card{background:#fff;border-radius:20px;padding:30px 28px 26px;box-shadow:0 30px 70px -26px rgba(0,0,0,.6)}
+.bar{height:3px;background:#e8edf0;border-radius:99px;overflow:hidden;margin-bottom:24px}
+.bar i{display:block;height:100%;background:#0f8b8d;border-radius:99px;transition:width .35s cubic-bezier(.4,0,.2,1)}
+.stepno{font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:#0f8b8d;margin:0 0 8px}
+h2{font-size:23px;letter-spacing:-.025em;margin:0 0 6px;font-weight:640}
+.qs{color:#5a6b78;font-size:14.5px;margin:0 0 24px;line-height:1.55}
+.pane{display:none}
+.pane.on{display:block;animation:in .3s cubic-bezier(.4,0,.2,1)}
+@keyframes in{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+.field{margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:550;margin-bottom:6px}
+input,select{width:100%;padding:12px 13px;font-size:15px;background:#fafbfc;border:1px solid #dfe5ea;border-radius:10px;outline:none;transition:.13s}
+select{background-image:${CHEV("#5a6b78")};background-repeat:no-repeat;background-position:right 13px center;padding-right:36px}
+input:focus,select:focus{background:#fff;border-color:#0f8b8d;box-shadow:0 0 0 3px rgba(15,139,141,.14)}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;padding:15px;border:1.5px solid #dfe5ea;border-radius:12px;cursor:pointer;transition:.13s;background:#fff}
+.opt:hover{border-color:#a8d4d4;background:#f7fcfc}
+.opt input{width:17px;height:17px;flex:none;accent-color:#0f8b8d;padding:0}
+.opt b{font-size:15px;font-weight:550;display:block}
+.opt span{font-size:12.5px;color:#5a6b78;display:block;margin-top:1px}
+.opt:has(input:checked){border-color:#0f8b8d;background:#f0f9f9;box-shadow:0 0 0 3px rgba(15,139,141,.1)}
+.nav{display:flex;gap:10px;margin-top:22px;align-items:center}
+button{padding:13px 22px;font-size:15px;font-weight:600;border:0;border-radius:10px;cursor:pointer;transition:.13s}
+.next{flex:1;background:#0f8b8d;color:#fff}
+.next:hover{background:#0b6f71}
+.back{background:none;color:#5a6b78;padding:13px 4px;font-weight:500}
+.back:hover{color:#0e1a23}
+.note{margin:16px 0 0;font-size:12.5px;color:#5a6b78;text-align:center;line-height:1.5}
+.foot{text-align:center;margin-top:18px;font-size:12.5px;color:#6b7d8b}
+</style>
+<div class="shell">
+  <div class="brand"><div class="mark">Oh</div><div>OhMD</div></div>
+  <div class="card">
+    <div class="bar"><i id="bar" style="width:33.33%"></i></div>
+    <form id="sf">
+      <div class="pane on" data-step="1">
+        <p class="stepno">Step 1 of 3</p>
+        <h2>Who are we meeting?</h2>
+        <p class="qs">Takes about 30 seconds.</p>
+        <div class="row">
+          <div class="field"><label for="s-fn">First name</label><input id="s-fn" name="first_name" required></div>
+          <div class="field"><label for="s-ln">Last name</label><input id="s-ln" name="last_name" required></div>
+        </div>
+        <div class="field"><label for="s-em">Work email</label><input type="email" id="s-em" name="email" required></div>
+        <div class="nav"><button type="button" class="next" data-to="2">Continue</button></div>
+      </div>
+
+      <div class="pane" data-step="2">
+        <p class="stepno">Step 2 of 3</p>
+        <h2>Where do you work?</h2>
+        <p class="qs">So we can pull up the right integration before the call.</p>
+        <div class="field"><label for="s-co">Practice / organization</label><input id="s-co" name="company_name" required></div>
+        <div class="field"><label for="s-jt">Job title</label><input id="s-jt" name="job_title" required></div>
+        <div class="nav"><button type="button" class="back" data-to="1">← Back</button><button type="button" class="next" data-to="3">Continue</button></div>
+      </div>
+
+      <div class="pane" data-step="3">
+        <p class="stepno">Step 3 of 3</p>
+        <h2>How many providers?</h2>
+        <p class="qs">This decides who from our team joins you.</p>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="provider_count" value="1-30" required><span><b>1–30 providers</b><span>Single site or small group</span></span></label>
+          <label class="opt"><input type="radio" name="provider_count" value="31+"><span><b>31+ providers</b><span>Multi-site group or health system</span></span></label>
+        </div>
+        <div class="nav"><button type="button" class="back" data-to="2">← Back</button><button type="submit" class="next">${CTA}</button></div>
+        <p class="note">${NOTE}</p>
+      </div>
+    </form>
+  </div>
+  <p class="foot">HIPAA-compliant · SOC 2 · 1,200+ healthcare orgs</p>
+</div>
+<script>
+  const panes = [...document.querySelectorAll(".pane")];
+  const bar = document.getElementById("bar");
+
+  function go(step) {
+    panes.forEach(p => p.classList.toggle("on", p.dataset.step === step));
+    bar.style.width = (step / 3 * 100) + "%";
+  }
+
+  document.querySelectorAll("[data-to]").forEach(b => {
+    b.addEventListener("click", () => {
+      const forward = b.classList.contains("next");
+      if (forward) {
+        const cur = b.closest(".pane");
+        const bad = [...cur.querySelectorAll("input,select")].find(i => !i.checkValidity());
+        if (bad) { bad.reportValidity(); return; }
+      }
+      go(b.dataset.to);
+    });
+  });
+
+  document.getElementById("sf").addEventListener("submit", e => e.preventDefault());
+<\/script>`
+});
+
+/* ============================================================
+   Picker wiring
+   ============================================================ */
+const tabsEl  = document.getElementById("tabs");
+const frame   = document.getElementById("frame");
+const nameEl  = document.getElementById("meta-name");
+const blurbEl = document.getElementById("meta-blurb");
+let current = 0;
+const BASE_H = 780;
+
+DESIGNS.forEach((d, i) => {
+  const b = document.createElement("button");
+  b.className = "tab";
+  b.setAttribute("role", "tab");
+  b.innerHTML = `<span class="n">${String(i + 1).padStart(2, "0")}</span>${d.short}`;
+  b.addEventListener("click", () => show(i));
+  tabsEl.appendChild(b);
+});
+
+function show(i) {
+  current = i;
+  const d = DESIGNS[i];
+
+  nameEl.textContent = d.name;
+  blurbEl.textContent = d.blurb;
+
+  [...tabsEl.children].forEach((t, k) =>
+    t.setAttribute("aria-selected", k === i ? "true" : "false"));
+
+  // Reset to the baseline first. Several designs use min-height:100vh, so the
+  // frame's own height feeds back into their content height — without this,
+  // each switch would ratchet the frame taller.
+  frame.style.height = BASE_H + "px";
+
+  frame.srcdoc =
+    `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">` +
+    `<meta name="viewport" content="width=device-width,initial-scale=1">${FONTS}</head>` +
+    `<body>${d.html}</body></html>`;
+}
+
+// Fit the frame to each design instead of one fixed height, so short pages
+// don't sit in a pool of dead space and the tall one still scrolls.
+function fit() {
+  const doc = frame.contentDocument;
+  if (!doc || !doc.body) return;
+  const h = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
+  frame.style.height = Math.min(Math.max(h, BASE_H), 1700) + "px";
+}
+
+frame.addEventListener("load", () => {
+  fit();
+  // Webfonts land after load and change the height.
+  const d = frame.contentDocument;
+  if (d && d.fonts) d.fonts.ready.then(fit);
+  setTimeout(fit, 400);
+});
+
+document.querySelectorAll(".wbtn").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".wbtn").forEach(x =>
+      x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    frame.className = b.dataset.w === "desktop" ? "" : "w-" + b.dataset.w;
+  });
+});
+
+addEventListener("keydown", e => {
+  if (e.key === "ArrowRight") show((current + 1) % DESIGNS.length);
+  if (e.key === "ArrowLeft")  show((current - 1 + DESIGNS.length) % DESIGNS.length);
+});
+
+show(0);
+</script>
+
+</body>
+</html>
