@@ -6,36 +6,45 @@
 <title>Book a demo — OhMD</title>
 <meta name="description" content="See how OhMD cuts front-desk call volume. Book a 20-minute demo." />
 <meta name="robots" content="noindex" />
-<link rel="icon" href="data:," />
+
+<!-- Favicon is the same nine-dot mark, inlined so there's no extra request. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' rx='44' fill='%232b3630'/%3E%3Cg fill='%23c6d6c2'%3E%3Ccircle cx='52' cy='52' r='12.5'/%3E%3Ccircle cx='100' cy='52' r='18'/%3E%3Ccircle cx='148' cy='52' r='12.5'/%3E%3Ccircle cx='52' cy='100' r='18'/%3E%3Ccircle cx='100' cy='100' r='24'/%3E%3Ccircle cx='148' cy='100' r='18'/%3E%3Ccircle cx='52' cy='148' r='12.5'/%3E%3Ccircle cx='100' cy='148' r='18'/%3E%3Ccircle cx='148' cy='148' r='12.5'/%3E%3C/g%3E%3C/svg%3E" />
 
 <meta property="og:title" content="Book a demo — OhMD" />
 <meta property="og:description" content="See how OhMD cuts front-desk call volume. Book a 20-minute demo." />
 <meta property="og:type" content="website" />
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+
 <style>
   :root {
-    --ink:      #0e1a23;
-    --ink-soft: #5a6b78;
-    --line:     #dfe5ea;
-    --bg:       #f6f8f9;
-    --card:     #ffffff;
-    --accent:   #0f8b8d;
-    --accent-d: #0b6f71;
+    /* Pulled from the logo: forest green ground, sage dots. --accent is the
+       only value worth changing for brand. */
+    --logo-dark: #2b3630;
+    --logo-sage: #c6d6c2;
+
+    --accent:   #34473c;
+    --accent-h: #24322a;
+
+    --ink:      #1d2721;
+    --ink-soft: #5c6b60;
+    --field:    #f2f7f1;
+    --field-br: #dfe9dd;
     --err:      #b42318;
   }
 
   * { box-sizing: border-box; }
 
-  html, body {
-    margin: 0;
-    padding: 0;
-  }
+  html, body { margin: 0; padding: 0; }
 
   body {
-    background: var(--bg);
+    background: linear-gradient(170deg, #eaf1e8 0%, #f4f8f4 44%, #fbf7f3 100%);
+    background-attachment: fixed;
     color: var(--ink);
-    font: 400 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
-          Helvetica, Arial, sans-serif;
+    font: 400 16px/1.55 "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
     display: flex;
@@ -45,57 +54,78 @@
   main {
     flex: 1;
     width: 100%;
-    max-width: 560px;
+    max-width: 520px;
     margin: 0 auto;
-    padding: 48px 20px 64px;
+    padding: 52px 22px 56px;
   }
 
+  /* ---------- brand ---------- */
   .brand {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 32px;
+    gap: 11px;
+    justify-content: center;
+    margin-bottom: 30px;
   }
 
-  .brand .mark {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    background: var(--accent);
-    color: #fff;
-    display: grid;
-    place-items: center;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: -0.02em;
+  .brand svg {
+    width: 44px;
+    height: 44px;
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(43, 54, 48, 0.22);
   }
 
   .brand .name {
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-weight: 700;
+    font-size: 17.5px;
+    letter-spacing: -0.015em;
   }
 
+  /* ---------- copy ---------- */
   h1 {
-    font-size: 30px;
-    line-height: 1.2;
-    letter-spacing: -0.025em;
-    margin: 0 0 10px;
-    font-weight: 640;
+    font-size: 34px;
+    line-height: 1.15;
+    letter-spacing: -0.028em;
+    text-align: center;
+    margin: 0 0 12px;
+    font-weight: 700;
   }
 
   .sub {
+    text-align: center;
     color: var(--ink-soft);
-    margin: 0 0 28px;
-    font-size: 16px;
+    font-size: 16.5px;
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 34ch;
   }
 
+  .chips {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 22px 0 26px;
+  }
+
+  .chip {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--accent);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--field-br);
+    border-radius: 999px;
+    padding: 6px 13px;
+  }
+
+  /* ---------- card ---------- */
   .card {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 28px;
-    box-shadow: 0 1px 2px rgba(14, 26, 35, 0.04),
-                0 8px 24px -12px rgba(14, 26, 35, 0.10);
+    background: #fff;
+    border-radius: 26px;
+    padding: 30px 28px;
+    box-shadow: 0 2px 6px rgba(29, 39, 33, 0.04),
+                0 24px 50px -22px rgba(29, 39, 33, 0.20);
   }
 
   .row {
@@ -104,69 +134,78 @@
     gap: 14px;
   }
 
-  .field { margin-bottom: 16px; }
+  .field { margin-bottom: 17px; }
 
   label {
     display: block;
     font-size: 13.5px;
-    font-weight: 550;
-    margin-bottom: 6px;
+    font-weight: 500;
+    margin-bottom: 7px;
     color: var(--ink);
   }
 
   input, select {
     width: 100%;
-    padding: 11px 12px;
+    padding: 13px 15px;
     font: inherit;
-    font-size: 15px;
+    font-size: 15.5px;
     color: var(--ink);
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 9px;
+    background: var(--field);
+    border: 1.5px solid transparent;
+    border-radius: 14px;
     outline: none;
-    transition: border-color .12s, box-shadow .12s;
+    transition: background .15s, border-color .15s, box-shadow .15s;
     appearance: none;
   }
 
   select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235a6b78' d='M1.4 1.4 6 6l4.6-4.6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235c6b60' d='M1.4 1.4 6 6l4.6-4.6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 34px;
+    background-position: right 15px center;
+    padding-right: 38px;
   }
 
   input:focus, select:focus {
+    background: #fff;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(15, 139, 141, 0.14);
+    box-shadow: 0 0 0 4px rgba(52, 71, 60, 0.12);
   }
 
-  input:user-invalid {
-    border-color: var(--err);
-  }
+  input:user-invalid { border-color: var(--err); }
 
   button[type="submit"] {
     width: 100%;
-    margin-top: 8px;
-    padding: 13px 16px;
+    margin-top: 10px;
+    padding: 15px;
     font: inherit;
-    font-size: 15.5px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 700;
     color: #fff;
     background: var(--accent);
     border: 0;
-    border-radius: 9px;
+    border-radius: 14px;
     cursor: pointer;
-    transition: background .12s, opacity .12s;
+    transition: background .15s, transform .15s, opacity .15s;
+    box-shadow: 0 8px 20px -8px rgba(52, 71, 60, 0.6);
   }
 
-  button[type="submit"]:hover:not(:disabled) { background: var(--accent-d); }
-  button[type="submit"]:disabled { opacity: .6; cursor: default; }
+  button[type="submit"]:hover:not(:disabled) {
+    background: var(--accent-h);
+    transform: translateY(-1px);
+  }
+
+  button[type="submit"]:disabled {
+    opacity: .6;
+    cursor: default;
+    transform: none;
+  }
 
   .note {
-    margin: 14px 0 0;
+    margin: 16px 0 0;
     font-size: 13px;
     color: var(--ink-soft);
     text-align: center;
+    line-height: 1.5;
   }
 
   .error {
@@ -177,17 +216,12 @@
     color: var(--err);
     background: #fef3f2;
     border: 1px solid #fecdc9;
-    border-radius: 8px;
+    border-radius: 12px;
   }
 
   .error.show { display: block; }
 
-  /* Where Default mounts the scheduler after a successful submit */
-  #scheduler:not(:empty) {
-    margin-top: 24px;
-    min-height: 620px;
-  }
-
+  /* ---------- success ---------- */
   .done {
     display: none;
     text-align: center;
@@ -197,21 +231,22 @@
   .done.show { display: block; }
 
   .done .tick {
-    width: 44px;
-    height: 44px;
-    margin: 0 auto 14px;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 16px;
     border-radius: 50%;
-    background: rgba(15, 139, 141, 0.10);
+    background: #eaf1e8;
     color: var(--accent);
     display: grid;
     place-items: center;
-    font-size: 22px;
+    font-size: 23px;
   }
 
   .done h2 {
-    font-size: 19px;
+    font-size: 20px;
     margin: 0 0 6px;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.02em;
+    font-weight: 700;
   }
 
   .done p {
@@ -222,19 +257,32 @@
 
   .hidden { display: none !important; }
 
+  /* Where Default mounts the scheduler after a successful submit */
+  #scheduler:not(:empty) {
+    margin-top: 24px;
+    min-height: 620px;
+  }
+
+  .trust {
+    text-align: center;
+    margin: 26px 0 0;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+
   footer {
     text-align: center;
-    padding: 0 20px 32px;
+    padding: 0 22px 32px;
     font-size: 12.5px;
     color: var(--ink-soft);
   }
 
   footer a { color: var(--ink-soft); }
 
-  @media (max-width: 480px) {
-    main { padding: 32px 16px 48px; }
-    h1 { font-size: 25px; }
-    .card { padding: 20px; border-radius: 12px; }
+  @media (max-width: 520px) {
+    main { padding: 34px 18px 44px; }
+    h1 { font-size: 27px; }
+    .card { padding: 24px 20px; border-radius: 20px; }
     .row { grid-template-columns: 1fr; gap: 0; }
   }
 </style>
@@ -243,15 +291,31 @@
 
 <main>
   <div class="brand">
-    <div class="mark">Oh</div>
+    <svg viewBox="0 0 200 200" role="img" aria-label="OhMD">
+      <rect width="200" height="200" rx="44" fill="var(--logo-dark)"/>
+      <g fill="var(--logo-sage)">
+        <circle cx="52"  cy="52"  r="12.5"/>
+        <circle cx="100" cy="52"  r="18"/>
+        <circle cx="148" cy="52"  r="12.5"/>
+        <circle cx="52"  cy="100" r="18"/>
+        <circle cx="100" cy="100" r="24"/>
+        <circle cx="148" cy="100" r="18"/>
+        <circle cx="52"  cy="148" r="12.5"/>
+        <circle cx="100" cy="148" r="18"/>
+        <circle cx="148" cy="148" r="12.5"/>
+      </g>
+    </svg>
     <div class="name">OhMD</div>
   </div>
 
-  <h1>Book a 20-minute demo</h1>
-  <p class="sub">
-    See how practices cut staff-answered calls without adding headcount.
-    Tell us a bit about your practice and pick a time that works.
-  </p>
+  <h1>Let's get your phones under control.</h1>
+  <p class="sub">A 20-minute look at how Nia handles the calls your front desk shouldn't have to.</p>
+
+  <div class="chips">
+    <span class="chip">HIPAA-compliant</span>
+    <span class="chip">85+ EHR integrations</span>
+    <span class="chip">Live in 2 weeks</span>
+  </div>
 
   <div class="card">
     <!-- Default's pre-built form. IDs must stay exactly as Default generated them. -->
@@ -298,7 +362,7 @@
       </div>
 
       <button type="submit" id="submit-btn">Find a time</button>
-      <p class="note">No pitch decks. A working demo on your own workflows.</p>
+      <p class="note">20 minutes. A working demo on your own workflows — no pitch deck.</p>
       <p class="error" id="form-error" role="alert"></p>
     </form>
 
@@ -308,6 +372,8 @@
       <p>Check your inbox — we've sent the meeting details and a calendar invite.</p>
     </div>
   </div>
+
+  <p class="trust">Trusted by 1,200+ healthcare organizations</p>
 
   <!-- Default renders the scheduler here once the form is submitted -->
   <div id="scheduler"></div>
