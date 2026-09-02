@@ -4,7 +4,7 @@
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const TABLE = "booking_submissions";
+const TABLE = "ohmd_default_booking_submissions";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {

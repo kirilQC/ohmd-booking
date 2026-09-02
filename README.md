@@ -2,7 +2,8 @@
 
 Single-page booking form that feeds Default's routing workflow, which in turn
 fires the Zapier booked-meeting enrichment webhook. Every submission is also
-mirrored into Supabase so we keep our own copy of the lead.
+mirrored into Supabase (`ohmd_default_booking_submissions`) so we keep our own
+copy of the lead.
 
 ```
 index.html        the page (form + Default Pixel SDK)
