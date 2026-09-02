@@ -641,8 +641,12 @@
       console.error("[booking] submitForm failed", err);
       btn.disabled = false;
       btn.textContent = "Find a time";
+      // Visitors get the friendly line; ?debug=1 gets the real reason, so you
+      // never have to open devtools to find out why a booking failed.
       showError(
-        "Something went wrong on our end. Email hello@ohmd.com and we'll get you booked."
+        DEBUG
+          ? `Default rejected this: ${err.message}`
+          : "Something went wrong on our end. Email hello@ohmd.com and we'll get you booked."
       );
     }
   });
